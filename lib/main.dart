@@ -69,14 +69,23 @@ class _MyAppState extends State<MyApp> {
   }
 
   void addCapitulo() {
+    int qteCapitulos =
+        int.parse(jsonBiblia['$idLivro']['qtecapitulos'].toString());
     setState(() {
-      numCapitulo = numCapitulo + 1;
+      numCapitulo = numCapitulo > qteCapitulos ? 1 : numCapitulo + 1;
       texto.clear();
       jsonBiblia['$idLivro']['capitulos']['$numCapitulo']
           .forEach((key, value) => texto.add(value));
     });
-    // print('----------------------------');
-    // texto.forEach((item) => print(item));
+  }
+
+  void subCapitulo() {
+    setState(() {
+      numCapitulo = numCapitulo > 1 ? numCapitulo - 1 : 1;
+      texto.clear();
+      jsonBiblia['$idLivro']['capitulos']['$numCapitulo']
+          .forEach((key, value) => texto.add(value));
+    });
   }
 
   @override
@@ -95,18 +104,34 @@ class _MyAppState extends State<MyApp> {
         appBar: AppBar(
           title: const Text('Carregar JSON'),
         ),
-        body: texto.isEmpty
-            ? const Text('SEM DADOS')
-            : ListView.builder(
-                padding: const EdgeInsets.all(8),
-                itemCount: texto.length,
-                prototypeItem: ListTile(title: Text(texto.first)),
-                itemBuilder: (context, index) {
-                  return ListTile(
-                    title: Text(texto[index]),
-                  );
-                }),
-        floatingActionButton: FloatingActionButton(onPressed: addCapitulo),
+        body: Column(children: [
+          SizedBox(
+            height: 50,
+            child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  ElevatedButton(
+                      onPressed: subCapitulo, child: const Text('Anterior')),
+                  ElevatedButton(
+                      onPressed: addCapitulo, child: const Text('Proximo')),
+                ]),
+          ),
+          Expanded(
+            child: texto.isEmpty
+                ? const Text('SEM DADOS')
+                : ListView.builder(
+                    padding: const EdgeInsets.all(8),
+                    itemCount: texto.length,
+                    prototypeItem: ListTile(title: Text(texto.first)),
+                    itemBuilder: (context, index) {
+                      return ListTile(
+                        title: Text(texto[index]),
+                      );
+                    }),
+          )
+        ]),
+        //   floatingActionButton: FloatingActionButton(onPressed: addCapitulo),
       ),
     );
   }
