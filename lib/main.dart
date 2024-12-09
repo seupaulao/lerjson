@@ -38,8 +38,8 @@ class _MyAppState extends State<MyApp> {
   // ignore: prefer_typing_uninitialized_variables
   var jsonBiblia;
   List<String> texto = [];
-  int numCapitulo = 1;
-  int idLivro = 1;
+  int numCapitulo = 5;
+  int idLivro = 40;
   int numVersiculo = 1;
 
   Future<void> loadJsonAsset() async {
@@ -124,25 +124,25 @@ class _MyAppState extends State<MyApp> {
             height: 25,
           ),
           SizedBox(
-            height: 400,
-            child: texto.isEmpty
-                ? const Text('SEM DADOS')
-                : ListView.builder(
-                    padding: const EdgeInsets.all(8),
-                    itemCount: texto.length,
-                    prototypeItem: SizedBox(
-                      height: 90,
-                      child: ListTile(title: Text(texto.first)),
+            height: 500,
+            child: ListView.builder(
+                padding: const EdgeInsets.all(8),
+                itemCount: texto.length,
+                prototypeItem: SizedBox(
+                  height: 70,
+                  child: ListTile(title: Text(texto.first)),
+                ),
+                itemBuilder: (context, index) {
+                  return SizedBox(
+                    height: 70,
+                    child: ListTile(
+                      title: Text("${index + 1}. ${texto[index]}"),
                     ),
-                    itemBuilder: (context, index) {
-                      return SizedBox(
-                        height: 90,
-                        child: ListTile(
-                          title: Text(texto[index]),
-                        ),
-                      );
-                    }),
-          )
+                  );
+                }),
+          ),
+          const SizedBox(height: 30),
+          Container(height: 40, color: Colors.amber)
         ]),
       ),
     );
