@@ -13,24 +13,24 @@ class MyApp extends StatefulWidget {
   State<StatefulWidget> createState() => _MyAppState();
 }
 
-class Pessoa {
-  final String name;
-  final int age;
-  final String email;
+// class Pessoa {
+//   final String name;
+//   final int age;
+//   final String email;
 
-  Pessoa(this.name, this.age, this.email);
+//   Pessoa(this.name, this.age, this.email);
 
-  Pessoa.fromJson(Map<String, dynamic> json)
-      : name = json['name'] as String,
-        age = json['age'] as int,
-        email = json['email'] as String;
+//   Pessoa.fromJson(Map<String, dynamic> json)
+//       : name = json['name'] as String,
+//         age = json['age'] as int,
+//         email = json['email'] as String;
 
-  Map<String, dynamic> toJson() => {
-        'name': name,
-        'age': age,
-        'email': email,
-      };
-}
+//   Map<String, dynamic> toJson() => {
+//         'name': name,
+//         'age': age,
+//         'email': email,
+//       };
+// }
 
 class _MyAppState extends State<MyApp> {
   // ignore: prefer_typing_uninitialized_variables
@@ -43,13 +43,13 @@ class _MyAppState extends State<MyApp> {
   int numVersiculo = 1;
 
   Future<void> loadJsonAsset() async {
-    final String jsonString = await rootBundle.loadString('assets/data.json');
-    final data = jsonDecode(jsonString) as Map<String, dynamic>;
+    // final String jsonString = await rootBundle.loadString('assets/data.json');
+    // final data = jsonDecode(jsonString) as Map<String, dynamic>;
 
     final String biblia = await rootBundle.loadString('assets/blv.json');
     final dataBiblia = jsonDecode(biblia) as Map<String, dynamic>;
     setState(() {
-      jsonData = Pessoa.fromJson(data);
+      // jsonData = Pessoa.fromJson(data);
       jsonBiblia = dataBiblia;
       texto.clear();
       dataBiblia['$idLivro']['capitulos']['$numCapitulo']
@@ -105,6 +105,9 @@ class _MyAppState extends State<MyApp> {
           title: const Text('Carregar JSON'),
         ),
         body: Column(children: [
+          const SizedBox(
+            height: 25,
+          ),
           SizedBox(
             height: 50,
             child: Row(
@@ -117,16 +120,26 @@ class _MyAppState extends State<MyApp> {
                       onPressed: addCapitulo, child: const Text('Proximo')),
                 ]),
           ),
-          Expanded(
+          const SizedBox(
+            height: 25,
+          ),
+          SizedBox(
+            height: 400,
             child: texto.isEmpty
                 ? const Text('SEM DADOS')
                 : ListView.builder(
                     padding: const EdgeInsets.all(8),
                     itemCount: texto.length,
-                    prototypeItem: ListTile(title: Text(texto.first)),
+                    prototypeItem: SizedBox(
+                      height: 90,
+                      child: ListTile(title: Text(texto.first)),
+                    ),
                     itemBuilder: (context, index) {
-                      return ListTile(
-                        title: Text(texto[index]),
+                      return SizedBox(
+                        height: 90,
+                        child: ListTile(
+                          title: Text(texto[index]),
+                        ),
                       );
                     }),
           )

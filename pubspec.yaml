@@ -68,6 +68,10 @@ flutter:
   assets:
     - assets/data.json 
     - assets/blv.json
+    - assets/biblias/grc.json
+    - assets/biblias/heb.json
+    - assets/bases/baselivros.json
+    - assets/bases/baseversos.json
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
