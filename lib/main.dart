@@ -38,6 +38,8 @@ class _MyAppState extends State<MyApp> {
   // ignore: prefer_typing_uninitialized_variables
   var jsonBiblia;
   List<String> texto = [];
+  List<String> textoOriginal = [];
+  List<String> textoTransliterado = [];
   int numCapitulo = 5;
   int idLivro = 40;
   int numVersiculo = 1;
@@ -47,7 +49,23 @@ class _MyAppState extends State<MyApp> {
     // final data = jsonDecode(jsonString) as Map<String, dynamic>;
 
     final String biblia = await rootBundle.loadString('assets/blv.json');
+    final String strBaseLivros =
+        await rootBundle.loadString('assets/bases/baselivros.json');
+    final String strBaseVersos =
+        await rootBundle.loadString('assets/bases/baseversos.json');
+
     final dataBiblia = jsonDecode(biblia) as Map<String, dynamic>;
+    final dataBaseLivros = jsonDecode(strBaseLivros) as List<dynamic>;
+    final dataBaseVersos = jsonDecode(strBaseVersos) as Map<String, dynamic>;
+
+    // print(dataBaseLivros[idLivro - 1]['abrev']);
+    // print(dataBaseVersos['$idLivro']['qteversos'][numCapitulo - 1]);
+
+    //ex: MAT
+    String abrev = dataBaseLivros[idLivro - 1]['abrev'];
+    //ex: MAT tem 48 versos capitulo 5
+    int numVersos = dataBaseVersos['$idLivro']['qteversos'][numCapitulo - 1];
+
     setState(() {
       // jsonData = Pessoa.fromJson(data);
       jsonBiblia = dataBiblia;
@@ -66,6 +84,19 @@ class _MyAppState extends State<MyApp> {
     //temp.forEach((item) => print(item));
     // print(dataBiblia['19']['livro']);
     // print(dataBiblia['19']['capitulos']['1']['1']);
+  }
+
+  List<String> getTextoOriginal(
+      int idLiv, int cap, int qteVersos, String abrev) {
+    List<String> lista = [];
+
+    return lista;
+  }
+
+  List<String> getTextoTransliterado(int cap, int qteVersos, String abrev) {
+    List<String> lista = [];
+
+    return lista;
   }
 
   void addCapitulo() {
@@ -93,6 +124,12 @@ class _MyAppState extends State<MyApp> {
     super.initState();
     loadJsonAsset();
   }
+  /*
+  *
+GRK/HEB
+TRANSLIT
+BLV
+  */
 
   @override
   Widget build(BuildContext context) {
@@ -128,10 +165,6 @@ class _MyAppState extends State<MyApp> {
             child: ListView.builder(
                 padding: const EdgeInsets.all(8),
                 itemCount: texto.length,
-                prototypeItem: SizedBox(
-                  height: 70,
-                  child: ListTile(title: Text(texto.first)),
-                ),
                 itemBuilder: (context, index) {
                   return SizedBox(
                     height: 70,
