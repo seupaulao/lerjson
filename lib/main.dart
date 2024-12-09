@@ -160,9 +160,9 @@ BLV
           const SizedBox(
             height: 25,
           ),
-          SizedBox(
-            height: 500,
+          Flexible(
             child: ListView.builder(
+                shrinkWrap: true,
                 padding: const EdgeInsets.all(8),
                 itemCount: texto.length,
                 itemBuilder: (context, index) {
