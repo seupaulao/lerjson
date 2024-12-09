@@ -37,6 +37,11 @@ class _MyAppState extends State<MyApp> {
   var jsonData;
   // ignore: prefer_typing_uninitialized_variables
   var jsonBiblia;
+  var jsonGrc;
+  var jsonHeb;
+  var jsonTranslit;
+  var blivros;
+  var bversos;
   List<String> texto = [];
   List<String> textoOriginal = [];
   List<String> textoTransliterado = [];
@@ -49,17 +54,27 @@ class _MyAppState extends State<MyApp> {
     // final data = jsonDecode(jsonString) as Map<String, dynamic>;
 
     final String biblia = await rootBundle.loadString('assets/blv.json');
+    final String bibliaGrc =
+        await rootBundle.loadString('assets/biblias/grc.json');
+    final String bibliaHeb =
+        await rootBundle.loadString('assets/biblias/heb.json');
     final String strBaseLivros =
         await rootBundle.loadString('assets/bases/baselivros.json');
     final String strBaseVersos =
         await rootBundle.loadString('assets/bases/baseversos.json');
+    final String strTranslit =
+        await rootBundle.loadString('assets/biblias/translit.json');
 
     final dataBiblia = jsonDecode(biblia) as Map<String, dynamic>;
     final dataBaseLivros = jsonDecode(strBaseLivros) as List<dynamic>;
     final dataBaseVersos = jsonDecode(strBaseVersos) as Map<String, dynamic>;
-
+    final dataGrc = jsonDecode(bibliaGrc) as Map<String, dynamic>;
+    final dataHeb = jsonDecode(bibliaHeb) as Map<String, dynamic>;
+    final dataTranslit = jsonDecode(strTranslit) as Map<String, dynamic>;
     // print(dataBaseLivros[idLivro - 1]['abrev']);
     // print(dataBaseVersos['$idLivro']['qteversos'][numCapitulo - 1]);
+
+    //print(dataTranslit['MAT_5_1']);
 
     //ex: MAT
     String abrev = dataBaseLivros[idLivro - 1]['abrev'];
@@ -69,6 +84,15 @@ class _MyAppState extends State<MyApp> {
     setState(() {
       // jsonData = Pessoa.fromJson(data);
       jsonBiblia = dataBiblia;
+      jsonGrc = dataGrc;
+      jsonHeb = dataHeb;
+      jsonTranslit = dataTranslit;
+      blivros = dataBaseLivros;
+      bversos = dataBaseVersos;
+      textoOriginal = getTextoOriginal(idLivro, numCapitulo, numVersos, abrev);
+      // print(textoOriginal);
+      textoTransliterado = getTextoTransliterado(numCapitulo, numVersos, abrev);
+
       texto.clear();
       dataBiblia['$idLivro']['capitulos']['$numCapitulo']
           .forEach((key, value) => texto.add(value));
@@ -90,32 +114,59 @@ class _MyAppState extends State<MyApp> {
       int idLiv, int cap, int qteVersos, String abrev) {
     List<String> lista = [];
 
+    for (var i = 1; i <= qteVersos; i++) {
+      String tt = "";
+      String chave = '${abrev}_${cap}_$i';
+      // print(' Chave: $chave');
+      if (idLiv < 40) {
+        tt = jsonHeb[chave];
+      } else {
+        tt = jsonGrc[chave];
+      }
+      // print(tt);
+      lista.add(tt);
+    }
+
     return lista;
   }
 
   List<String> getTextoTransliterado(int cap, int qteVersos, String abrev) {
     List<String> lista = [];
-
+    for (var i = 1; i <= qteVersos; i++) {
+      String tt = "";
+      String chave = '${abrev}_${cap}_$i';
+      tt = jsonTranslit[chave];
+      lista.add(tt);
+    }
     return lista;
   }
 
   void addCapitulo() {
     int qteCapitulos =
         int.parse(jsonBiblia['$idLivro']['qtecapitulos'].toString());
+    String abrev = blivros[idLivro - 1]['abrev'];
+    int numVersos = bversos['$idLivro']['qteversos'][numCapitulo - 1];
+
     setState(() {
       numCapitulo = numCapitulo > qteCapitulos ? 1 : numCapitulo + 1;
       texto.clear();
       jsonBiblia['$idLivro']['capitulos']['$numCapitulo']
           .forEach((key, value) => texto.add(value));
+      textoOriginal = getTextoOriginal(idLivro, numCapitulo, numVersos, abrev);
+      textoTransliterado = getTextoTransliterado(numCapitulo, numVersos, abrev);
     });
   }
 
   void subCapitulo() {
+    String abrev = blivros[idLivro - 1]['abrev'];
+    int numVersos = bversos['$idLivro']['qteversos'][numCapitulo - 1];
     setState(() {
       numCapitulo = numCapitulo > 1 ? numCapitulo - 1 : 1;
       texto.clear();
       jsonBiblia['$idLivro']['capitulos']['$numCapitulo']
           .forEach((key, value) => texto.add(value));
+      textoOriginal = getTextoOriginal(idLivro, numCapitulo, numVersos, abrev);
+      textoTransliterado = getTextoTransliterado(numCapitulo, numVersos, abrev);
     });
   }
 
@@ -167,9 +218,16 @@ BLV
                 itemCount: texto.length,
                 itemBuilder: (context, index) {
                   return SizedBox(
-                    height: 70,
+                    height: 200,
                     child: ListTile(
-                      title: Text("${index + 1}. ${texto[index]}"),
+                      title: Column(
+                        children: [
+                          Text("${index + 1}"),
+                          Text(textoOriginal[index]),
+                          Text(textoTransliterado[index]),
+                          Text(texto[index]),
+                        ],
+                      ),
                     ),
                   );
                 }),
